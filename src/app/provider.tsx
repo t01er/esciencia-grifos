@@ -1,4 +1,4 @@
-import { HeroUIProvider } from "@heroui/react";
+import { HeroUIProvider, ToastProvider } from "@heroui/react";
 import { createContext, useEffect, useState } from 'react';
 
 interface ThemeContextType {
@@ -34,7 +34,8 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <HeroUIProvider>
+    <HeroUIProvider locale="es-ES">
+      <ToastProvider placement="bottom-center" />
       <ThemeContext.Provider value={{ theme, toggleTheme }}>
         {children}
       </ThemeContext.Provider>

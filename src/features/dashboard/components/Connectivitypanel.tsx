@@ -1,9 +1,7 @@
 import { Progress } from "@heroui/react";
 
 type ConnectivityPanelProps = {
-    /** 0 a 4 barras */
     signalStrength: 0 | 1 | 2 | 3 | 4;
-    /** 0 a 100 */
     batteryLevel: number;
     lastSync: string;
     isOnline: boolean;

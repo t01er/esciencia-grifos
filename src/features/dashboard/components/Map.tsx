@@ -3,8 +3,6 @@ import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import NeveraLayer from "./NeveraLayer";
 import { MAPBOX_API_KEY } from "../../../config/env";
-import GraphicsCountNeveras from "./GraphicsCountNeveras";
-import TallerLayer from "./TallerLayer";
 
 interface Nevera {
   cod_nevera: string;
@@ -97,12 +95,7 @@ export default function Map({
           <NeveraLayer
             map={mapRef.current}
             neveras={neveras}
-          />
-
-          <TallerLayer
-            map={mapRef.current}
-            talleres={talleres}
-          />
+          />         
         </>
       )}
     </div>

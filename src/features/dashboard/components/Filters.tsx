@@ -4,7 +4,6 @@ import {
   SelectItem,
   Button,
   Input,
-  Spinner,
   Dropdown,
   DropdownTrigger,
   DropdownMenu,
@@ -84,7 +83,7 @@ export default function Filters({
     <div className="absolute top-2 right-2 z-20 max-w-xl">
       <div className="flex items-center gap-2 bg-background/95 dark:bg-background/95 border border-default-200 dark:border-divider rounded-full shadow-lg px-2 py-1.5 w-xs">
         {showMapStyles && mapStyles && setMapStyle && mapStyle && (
-          <Dropdown backdrop="blur">
+          <Dropdown backdrop="transparent">
             <DropdownTrigger>
               <Button
                 variant="flat"

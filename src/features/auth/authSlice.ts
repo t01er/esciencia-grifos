@@ -9,18 +9,83 @@ interface AuthState {
   error: string | null;
 }
 
+function decodeToken(token: string): Record<string, any> | null {
+  try {
+    const payload = token.split(".")[1];
+    if (!payload) return null;
+    const base64 = payload.replace(/-/g, "+").replace(/_/g, "/");
+    const padded = base64.padEnd(
+      base64.length + ((4 - (base64.length % 4)) % 4),
+      "="
+    );
+    const json = decodeURIComponent(
+      atob(padded)
+        .split("")
+        .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+        .join("")
+    );
+    return JSON.parse(json);
+  } catch (e) {
+    console.error("Error decodificando token:", e);
+    return null;
+  }
+}
+
+function buildUserFromToken(token: string): Omit<UserAPIType, "accessToken" | "tokenType"> | null {
+  const payload = decodeToken(token);
+  if (!payload) return null;
+
+  const {
+    sub,
+    id,
+    uuid,
+    roles,
+    email,
+    time_zone,
+    company_id,
+    project_id,
+    views,
+  } = payload;
+
+  return {
+    sub,
+    id,
+    uuid,
+    roles: roles ?? [],
+    email,
+    time_zone,
+    company_id,
+    project_id,
+    views: views ?? [],
+  } as unknown as Omit<UserAPIType, "accessToken" | "tokenType">;
+}
+
 const getStoredAuth = () => {
   if (typeof window === "undefined") {
     return { token: null, user: null, isAuthenticated: false };
   }
 
   const storedToken = localStorage.getItem("token");
-  const storedUser = localStorage.getItem("user");
+  const storedUserRaw = localStorage.getItem("user");
+
+  let user: any = null;
+  try {
+    user = storedUserRaw ? JSON.parse(storedUserRaw) : null;
+  } catch {
+    user = null;
+  }
+
+  if (storedToken && (!user || Object.keys(user).length === 0)) {
+    user = buildUserFromToken(storedToken);
+    if (user) {
+      localStorage.setItem("user", JSON.stringify(user));
+    }
+  }
 
   return {
     token: storedToken,
     isAuthenticated: !!storedToken,
-    user: storedUser ? JSON.parse(storedUser) : null,
+    user,
   };
 };
 
@@ -58,6 +123,15 @@ const authSlice = createSlice({
     setAuthError: (state, action: PayloadAction<string | null>) => {
       state.error = action.payload;
     },
+    hydrateUserFromToken: (state) => {
+      if (state.token) {
+        const user = buildUserFromToken(state.token);
+        if (user) {
+          state.user = user;
+          persistAuth(state);
+        }
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -65,12 +139,14 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addMatcher(authApi.endpoints.login.matchFulfilled, (state, action) => {
-        const { accessToken, tokenType, ...restOfUser } = action.payload;
+        const { accessToken } = action.payload;
 
         state.token = accessToken;
         state.isAuthenticated = true;
-        state.user = restOfUser;
         state.error = null;
+
+        const userFromToken = buildUserFromToken(accessToken);
+        state.user = userFromToken ?? null;
 
         persistAuth(state);
       })
@@ -88,5 +164,10 @@ const authSlice = createSlice({
   },
 });
 
-export const { clearAuthError, logout, setAuthError } = authSlice.actions;
+export const {
+  clearAuthError,
+  logout,
+  setAuthError,
+  hydrateUserFromToken,
+} = authSlice.actions;
 export default authSlice.reducer;

@@ -56,11 +56,17 @@ export default function DeviceListPanel({
 
     return (
         <div className="flex flex-col gap-3 ">
-            {alertCount > 0 && (
-                <p className="text-xs font-medium text-default-400">
-                    {alertCount} dispositivo{alertCount > 1 ? "s" : ""} con alertas
-                </p>
-            )}
+            <div className="flex items-stretch justify-between">
+                <div>
+                    <h2 className="text-base font-semibold text-foreground">Dispositivos</h2>
+                    <span className="text-xs text-default-400 mt-0.5">Con alertas activas</span>
+                </div>
+                {alertCount > 0 && (
+                    <p className="text-xs font-medium text-default-400">
+                        {alertCount} dispositivo{alertCount > 1 ? "s" : ""} con alertas
+                    </p>
+                )}
+            </div>
 
             <div
                 className="flex gap-3 overflow-x-auto overflow-y-hidden pb-3"
@@ -121,12 +127,12 @@ export default function DeviceListPanel({
                                 {device.alertLevel !== "none" && device.alertMessage
                                     ? device.alertMessage
                                     : device.location}
-                            </p>                            
+                            </p>
                             <div className={`mt-3 flex items-center justify-between pt-2 border-t border-divider/40 border-dashed ${config.borderColor}`}>
                                 <span className="text-[10px] text-default-400">
                                     {device.status === "active" ? "Activo" : "Inactivo"}
                                 </span>
-                                
+
                                 <AltArrowRight
                                     size={14}
                                     className="
@@ -177,7 +183,7 @@ export default function DeviceListPanel({
                 )}
             </div>
 
-            
+
         </div>
     );
 }

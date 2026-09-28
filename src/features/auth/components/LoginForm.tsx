@@ -145,7 +145,7 @@ export default function LoginForm() {
 
   return (
     <motion.div
-      className="w-screen h-screen min-h-screen bg-[#F8FAFC] flex flex-col md:flex-row overflow-hidden font-sans justify-center items-center md:items-stretch  relative"
+      className="w-screen h-screen min-h-screen flex flex-col md:flex-row overflow-hidden font-sans justify-center items-center md:items-stretch  relative"
       variants={containerVariants}
       initial="hidden"
       animate="visible"

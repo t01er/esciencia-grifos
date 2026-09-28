@@ -57,9 +57,7 @@ const devices = [
 export default function BentoGrid() {
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 py-2">
-      <Panel
-        title="Dispositivos"
-        subtitle="Con alertas activas"
+      <Panel        
         className="lg:col-span-2 min-h-[220px]"
       >
         <DeviceListPanel
